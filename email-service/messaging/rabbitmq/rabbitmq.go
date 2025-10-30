@@ -4,14 +4,17 @@ import (
 	"fmt"
 
 	amqp "github.com/rabbitmq/amqp091-go"
+	"github.com/yehezkiel1086/go-gin-rabbitmq-email-notif/email-service/config"
 )
 
 type RabbitMQ struct {
 	conn *amqp.Connection
 }
 
-func InitRabbitMQ() (*RabbitMQ, error) {
-	conn, err := amqp.Dial("amqp://user:password@172.22.85.242:5672/")
+func InitRabbitMQ(conf *config.Rabbitmq) (*RabbitMQ, error) {
+	uri := fmt.Sprintf("amqp://%s:%s@%s:%s/", conf.User, conf.Pass, conf.Host, conf.Port)
+
+	conn, err := amqp.Dial(uri)
 	if err != nil {
 		return &RabbitMQ{}, fmt.Errorf("failed to connect to RabbitMQ: %v", err)
 	}

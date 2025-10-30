@@ -2,8 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 
+	"github.com/yehezkiel1086/go-gin-rabbitmq-email-notif/email-service/config"
 	"github.com/yehezkiel1086/go-gin-rabbitmq-email-notif/email-service/messaging/rabbitmq"
 )
 
@@ -13,8 +15,15 @@ type UserResponse struct {
 }
 
 func main() {
+	// get .env configs
+	conf, err := config.InitConfig()
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("✅ .env configs loaded successfully")
+	
 	// init rabbitmq
-	mq, err := rabbitmq.InitRabbitMQ()
+	mq, err := rabbitmq.InitRabbitMQ(conf.Rabbitmq)
 	if err != nil {
 		log.Fatalf("Failed to initialize RabbitMQ: %v", err)
 	}
