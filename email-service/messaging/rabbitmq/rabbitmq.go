@@ -11,11 +11,10 @@ type RabbitMQ struct {
 }
 
 func InitRabbitMQ() (*RabbitMQ, error) {
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial("amqp://user:password@172.22.85.242:5672/")
 	if err != nil {
 		return &RabbitMQ{}, fmt.Errorf("failed to connect to RabbitMQ: %v", err)
 	}
-	defer conn.Close()
 
 	return &RabbitMQ{
 		conn: conn,
@@ -27,8 +26,6 @@ func (r *RabbitMQ) DeclareChannel() (*amqp.Channel, error) {
 	if err != nil {
 		return &amqp.Channel{}, fmt.Errorf("failed to open channel: %v", err)
 	}
-
-	defer ch.Close()
 
 	return ch, nil
 }

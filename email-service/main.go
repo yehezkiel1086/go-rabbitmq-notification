@@ -18,12 +18,15 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to initialize RabbitMQ: %v", err)
 	}
+	conn := mq.GetConnection()
+	defer conn.Close()
 
 	// declare channel
 	ch, err := mq.DeclareChannel()
 	if err != nil {
 		log.Fatalf("Failed to declare channel: %v", err)
 	}
+	defer ch.Close()
 
 	// declare queue
 	q, err := mq.DeclareQueue(ch, "user_registered")

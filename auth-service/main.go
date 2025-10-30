@@ -42,6 +42,8 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to connect to RabbitMQ: %v", err)
 	}
+	conn := mq.GetConnection()
+	defer conn.Close()
 	fmt.Println("✅ RabbitMQ connected successfully")
 
 	ch, err := mq.DeclareChannel()
