@@ -1,0 +1,23 @@
+# https://taskfile.dev
+
+version: '3'
+
+dotenv:
+  - .env
+
+tasks:
+  compose:up:
+    desc: "run docker containers"
+    cmd: docker compose up -d
+
+  compose:down:
+    desc: "stop running docker containers"
+    cmd: docker compose down
+  
+  db:cli:
+    desc: "access postgres db cli"
+    cmd: docker exec -it postgres psql -U {{ .DB_USER }} -b {{ .DB_NAME }}
+
+  dev:user:
+    desc: "run user service in development mode"
+    cmd: go run user-service/cmd/http/main.go

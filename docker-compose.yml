@@ -1,16 +1,15 @@
 services:
   rabbitmq:
-    image: rabbitmq:3-management
+    image: rabbitmq:3.13-management-alpine
     volumes:
       - ./rabbitmq_data:/var/lib/rabbitmq # Persist data
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
     ports:
-      - "${RABBITMQ_PORT}:5672" # Standard AMQP port
+      - "5672:5672" # Standard AMQP port
       - "15672:15672" # RabbitMQ Management UI port
     container_name: rabbitmq
-
   postgres:
     image: postgres:17-alpine
     restart: always
@@ -18,10 +17,10 @@ services:
       - ./postgres-data:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     ports:
-      - ${DB_PORT}:5432
+      - 5432:5432
     container_name: postgres
 
   # auth-service:
@@ -56,8 +55,6 @@ services:
 
 volumes:
   postgres-data:
+    driver: local
   rabbitmq_data:
-
-# networks:
-#   app-network:
-#     driver: bridge
+    driver: local
