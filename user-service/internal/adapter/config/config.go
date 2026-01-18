@@ -54,8 +54,8 @@ func New() (*Container, error) {
 	}
 
 	HTTP := &HTTP{
-		Host:           os.Getenv("HTTP_HOST"),
-		Port:           os.Getenv("HTTP_PORT"),
+		Host:           os.Getenv("USER_HOST"),
+		Port:           os.Getenv("USER_PORT"),
 	}
 
 	DB := &DB{
