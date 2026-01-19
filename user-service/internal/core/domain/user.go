@@ -16,6 +16,8 @@ type User struct {
 	Password string `json:"password" gorm:"size:255;not null"`
 	Name string `json:"name" gorm:"size:255;not null"`
 	Role Role `json:"role" gorm:"default:2001;not null"`
+	ConfirmationToken string `json:"confirmation_token" gorm:"size:255"`
+	IsVerified bool `json:"is_verified" gorm:"default:false"`
 }
 
 type UserRequest struct {

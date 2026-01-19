@@ -14,7 +14,7 @@ type NotifRepository struct {
 
 func NewNotifRepository(mq *rabbitmq.Rabbitmq) (*NotifRepository, error) {
 	// init queue
-	q, err := mq.DeclareQueue("notif_queue")
+	q, err := mq.DeclareQueue("email_confirm")
 	if err != nil {
 		return nil, err
 	}

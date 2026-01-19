@@ -2,7 +2,6 @@ package service
 
 import (
 	"context"
-	"fmt"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/yehezkiel1086/go-rabbitmq-email-notification/user-service/internal/adapter/storage/rabbitmq"
@@ -18,7 +17,7 @@ type UserService struct {
 }
 
 func NewUserService(repo port.UserRepository, mq *rabbitmq.Rabbitmq) (*UserService, error) {
-	q, err := mq.DeclareQueue("notif_queue")
+	q, err := mq.DeclareQueue("email_confirm")
 	if err != nil {
 		return nil, err
 	}
@@ -39,14 +38,31 @@ func (us *UserService) RegisterUser(ctx context.Context, user *domain.User) (*do
 
 	user.Password = hashedPwd
 
+	// generate confirmation token
+	user.ConfirmationToken, err = util.GenerateToken()
+	if err != nil {
+		return nil, err
+	}
+
 	// create user
 	createdUser, err := us.repo.CreateUser(ctx, user)
 	if err != nil {
 		return nil, err
 	}
 
+	// generate json object
+	confData := map[string]string{
+		"email": createdUser.Email,
+		"confirmation_token": user.ConfirmationToken,
+	}
+
+	confJson, err := util.Serialize(confData)
+	if err != nil {
+		return nil, err
+	}
+
 	// send email notification
-	if err := us.mq.Send(us.q, fmt.Sprintf("%s: user registered successfully", createdUser.Email)); err != nil {
+	if err := us.mq.SendJSON(us.q, confJson); err != nil {
 		return nil, err
 	}
 
