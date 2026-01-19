@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 
 	"github.com/yehezkiel1086/go-rabbitmq-email-notification/user-service/internal/adapter/config"
 	"github.com/yehezkiel1086/go-rabbitmq-email-notification/user-service/internal/core/port"
@@ -21,11 +22,18 @@ func NewAuthService(conf *config.JWT, userRepo port.UserRepository) *AuthService
 }
 
 func (as *AuthService) Login(ctx context.Context, email, password string) (string, error) {
+	// check email
 	user, err := as.userRepo.GetUserByEmail(ctx, email)
 	if err != nil {
 		return "", err
 	}
 
+	// check is_verified
+	if !user.IsVerified {
+		return "", errors.New("user is not verified")
+	}
+
+	// check password
 	if err := util.CompareHashedPwd(user.Password, password); err != nil {
 		return "", err
 	}

@@ -37,7 +37,7 @@ func (ah *AuthHandler) Login(c *gin.Context) {
 
 	token, err := ah.svc.Login(c, req.Email, req.Password)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": domain.ErrUnauthorized})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": domain.ErrUnauthorized.Error()})
 		return
 	}
 
@@ -45,7 +45,7 @@ func (ah *AuthHandler) Login(c *gin.Context) {
 	duration, err := strconv.Atoi(ah.conf.Duration)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": domain.ErrInternal,
+			"error": domain.ErrInternal.Error(),
 		})
 		return
 	}
